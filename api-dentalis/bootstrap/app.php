@@ -25,7 +25,8 @@ return Application::configure(
         // Les middlewares globaux et spécifiques peuvent être définis ici.
         // Exemple : $middleware->alias('auth', \App\Http\Middleware\Authenticate::class);
         $middleware->alias([
-            'admin' => \App\Http\Middleware\CheckAdmin::class
+            'admin' => \App\Http\Middleware\CheckAdmin::class,
+            'patient' => \App\Http\Middleware\CheckPatient::class,
         ]);
     })
     // Configure le gestionnaire des exceptions de l'application.

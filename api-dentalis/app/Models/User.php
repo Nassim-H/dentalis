@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\CustomMustVerifyEmail;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmailContract
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, CustomMustVerifyEmail;
 
     protected $fillable = [
         'first_name',
         'last_name',
         'email',
         'password',
+        'is_Verified',
     ];
 
     

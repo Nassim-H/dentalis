@@ -47,7 +47,6 @@ class EmailVerificationRequest extends FormRequest
     {
         if (! $this->user()->hasVerifiedEmail()) {
             $this->user()->markEmailAsVerified();
-
             event(new Verified($this->user()));
         }
     }

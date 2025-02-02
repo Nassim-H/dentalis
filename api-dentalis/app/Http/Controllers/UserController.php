@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use Illuminate\Support\ValidatedInput;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use PharIo\Manifest\Email;
 
-class UserController extends Controller
+
+
+
+class UserController extends Controller 
 {
     /**
      * Handle user registration.
@@ -35,6 +35,16 @@ class UserController extends Controller
 
         event(new Registered($user));
 
+        //Debug
+        // Générer l'URL de vérification manuellement
+        /*
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify', // Nom de la route de vérification
+            now()->addMinutes(60), // Le lien expire dans 60 minutes
+            ['id' => $user->id, 'hash' => sha1($user->email)] // Paramètres requis par la route
+        );
+        */
+
         $user->sendEmailVerificationNotification();
 
         // Retourner une réponse avec l'utilisateur et un token
@@ -42,6 +52,7 @@ class UserController extends Controller
             'message' => 'Utilisateur créé avec succès. Veuillez vérifier votre email pour activer votre compte.',
             'user' => $user,
             'token' => $user->createToken('auth_token')->plainTextToken,
+            //'verification_url' => $verificationUrl,
         ], 201);
     }
 
@@ -61,6 +72,10 @@ class UserController extends Controller
         // Vérification de l'utilisateur
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json(['message' => 'Les informations d\'identification sont incorrectes.'], 401);
+        }
+
+        if($user->is_Verified==0){
+            return response()->json(['message' => 'Veuillez vérifier votre email pour activer votre compte.'], 401);
         }
 
         // Retourner une réponse avec l'utilisateur et un token
@@ -137,8 +152,21 @@ class UserController extends Controller
     /**
      * Handle email verification.
      */
-    public function verifyEmail(EmailVerificationRequest $request){
-        $request->fulfill();
-        return response()->json(['message' => 'Email verified successfully']);
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $user = User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return response()->json(['message' => 'Invalid verification link'], 400);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified'], 200);
+        }
+
+        if ($user->markEmailAsVerified()) {
+        }
+
+        return response()->json(['message' => 'User verified successfully'], 200);
     }
 }
