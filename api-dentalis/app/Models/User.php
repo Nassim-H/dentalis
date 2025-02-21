@@ -12,6 +12,8 @@ class User extends Authenticatable implements MustVerifyEmailContract
 {
     use HasApiTokens, Notifiable, CustomMustVerifyEmail;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'first_name',
         'last_name',

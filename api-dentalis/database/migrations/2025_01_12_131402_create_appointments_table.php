@@ -14,8 +14,6 @@ class CreateAppointmentsTable extends Migration
             $table->dateTime('date');
             $table->integer('duration')->comment('Durée en minutes');
             $table->string('description');
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
-            $table->timestamps();
         });
     }
 

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RdvController;
+use App\Http\Controllers\AvailabilityController;
 
 // Routes pour la gestion des comptes et l'authentification
 Route::prefix('users')->group(function () {
@@ -25,4 +26,10 @@ Route::prefix('patient')->middleware(['auth:sanctum', 'patient'])->group(functio
     Route::get('getRdv', [RdvController::class, 'getRdvPatient']);
     Route::patch('updateRdv', [RdvController::class, 'updateRdvPatient']); 
     Route::delete('deleteRdv', [RdvController::class, 'deleteRdvPatient']);
+});
+
+Route::prefix('availabilitiesDoctors')->middleware(['auth:sanctum', 'doctor'])->group(function () {
+    Route::post('createAvailability', [AvailabilityController::class, 'createAvailability']);
+    Route::get('getAvailability', [AvailabilityController::class, 'getAvailability']);
+    Route::delete('deleteAvailability', [AvailabilityController::class, 'deleteAvailability']);
 });

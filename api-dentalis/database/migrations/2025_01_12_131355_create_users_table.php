@@ -16,7 +16,6 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->boolean('admin')->default(false);
             $table->boolean('doctor')->default(false);
-            $table->timestamps();
             $table->boolean('is_Verified')->default(false);
         });
     }

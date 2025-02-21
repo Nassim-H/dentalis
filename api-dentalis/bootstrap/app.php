@@ -27,6 +27,7 @@ return Application::configure(
         $middleware->alias([
             'admin' => \App\Http\Middleware\CheckAdmin::class,
             'patient' => \App\Http\Middleware\CheckPatient::class,
+            'doctor' => \App\Http\Middleware\CheckDoctor::class,
         ]);
     })
     // Configure le gestionnaire des exceptions de l'application.
