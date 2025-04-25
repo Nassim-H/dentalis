@@ -1,0 +1,81 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.bienvenue {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f4f4f4;
+}
+
+.bienvenue h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.bienvenue p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.bienvenue .btn-rdv {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.bienvenue .btn-rdv:hover {
+    background-color: #0056b3;
+}
+
+.about {
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+}
+
+.about h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.reviews {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.reviews h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.review-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.review-list li {
+    margin-bottom: 20px;
+    border-left: 5px solid #007BFF;
+    padding-left: 10px;
+    font-style: italic;
+}
+
+.review-list li span {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+    color: #007BFF;
+}

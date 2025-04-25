@@ -19,7 +19,8 @@ class User extends Authenticatable implements MustVerifyEmailContract
         'last_name',
         'email',
         'password',
-        'is_Verified',
+        'doctor',
+        'admin',
     ];
 
     
@@ -30,5 +31,25 @@ class User extends Authenticatable implements MustVerifyEmailContract
     
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'doctor' => 'boolean',
+        'admin' => 'boolean',
     ];
+
+    // Si l'utilisateur est un client, ses RDV pris
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'client_id');
+    }
+
+    // Si l'utilisateur est un docteur, les RDV qu'il reçoit
+    public function receivedAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'doctor_id');
+    }
+
+    // Disponibilités pour un docteur
+    public function availabilities()
+    {
+        return $this->hasMany(Availability::class, 'doctor_id');
+    }
 }

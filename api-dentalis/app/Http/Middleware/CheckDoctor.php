@@ -18,7 +18,7 @@ class CheckDoctor
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::user()->doctor) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Accès réservé aux professionnels de santé'], 403);
         }
         return $next($request);
     }

@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Availability extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = [
-        'id',
         'doctor_id',
         'start_datetime',
         'end_datetime',
     ];
+
+    public function doctor()
+    {
+        return $this->belongsTo(User::class, 'doctor_id');
+    }
 }

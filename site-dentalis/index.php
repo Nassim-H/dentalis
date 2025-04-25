@@ -1,5 +1,14 @@
 <?php
+// Démarrer la session si nécessaire
+session_start();
 
-header('Location: ./app/views/accueil.php');
+// Inclure la page demandée
+$page = isset($_GET['page']) ? $_GET['page'] : 'accueil';
 
-exit;
+// Vérifier si le fichier existe dans app/
+if (file_exists("app/$page.php")) {
+    require "app/views/$page.php";
+} else {
+    echo "Erreur 404 : Page non trouvée";
+}
+?>

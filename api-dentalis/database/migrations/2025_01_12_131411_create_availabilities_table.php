@@ -10,9 +10,10 @@ class CreateAvailabilitiesTable extends Migration
     {
         Schema::create('availabilities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctor_id')->constrained('users');
+            $table->foreignId('doctor_id')->constrained('users')->onDelete('cascade');
             $table->datetime('start_datetime'); // Start date and time of availability
             $table->datetime('end_datetime');   // End date and time of availability
+            $table->timestamps(); // Created at and updated at timestamps
         });
     }
 

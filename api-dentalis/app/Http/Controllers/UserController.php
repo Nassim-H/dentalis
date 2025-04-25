@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-
-
-
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller 
 {
@@ -23,9 +20,8 @@ class UserController extends Controller
             'email' => 'email|unique:users',
             'password' => 'string|min:8',
         ]);
-        
 
-        // Création de l'utilisateur
+        // Création de l'utilisateur sans vérification par email
         $user = User::create([
             'last_name' => $validated['lastName'],
             'first_name' => $validated['firstName'],
@@ -33,26 +29,11 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']), // Hashage du mot de passe
         ]);
 
-        event(new Registered($user));
-
-        //Debug
-        // Générer l'URL de vérification manuellement
-        /*
-        $verificationUrl = URL::temporarySignedRoute(
-            'verification.verify', // Nom de la route de vérification
-            now()->addMinutes(60), // Le lien expire dans 60 minutes
-            ['id' => $user->id, 'hash' => sha1($user->email)] // Paramètres requis par la route
-        );
-        */
-
-        $user->sendEmailVerificationNotification();
-
         // Retourner une réponse avec l'utilisateur et un token
         return response()->json([
-            'message' => 'Utilisateur créé avec succès. Veuillez vérifier votre email pour activer votre compte.',
+            'message' => 'Utilisateur créé avec succès.',
             'user' => $user,
             'token' => $user->createToken('auth_token')->plainTextToken,
-            //'verification_url' => $verificationUrl,
         ], 201);
     }
 
@@ -72,10 +53,6 @@ class UserController extends Controller
         // Vérification de l'utilisateur
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json(['message' => 'Les informations d\'identification sont incorrectes.'], 401);
-        }
-
-        if($user->is_Verified==0){
-            return response()->json(['message' => 'Veuillez vérifier votre email pour activer votre compte.'], 401);
         }
 
         // Retourner une réponse avec l'utilisateur et un token
@@ -118,7 +95,6 @@ class UserController extends Controller
         return response()->json(['message' => 'Utilisateur supprimé avec succès.']);
     }
 
-
     /**
      * Handle user update.
      */
@@ -149,24 +125,64 @@ class UserController extends Controller
     }
 
 
-    /**
-     * Handle email verification.
-     */
-    public function verifyEmail(Request $request, $id, $hash)
-    {
-        $user = User::findOrFail($id);
+    public function index()
+{
+    $users = User::all();
 
-        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-            return response()->json(['message' => 'Invalid verification link'], 400);
-        }
+    return response()->json([
+        'users' => $users
+    ]);
+}
 
-        if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified'], 200);
-        }
 
-        if ($user->markEmailAsVerified()) {
-        }
+public function show($id)
+{
+    $user = User::findOrFail($id);
 
-        return response()->json(['message' => 'User verified successfully'], 200);
-    }
+    return response()->json([
+        'user' => $user
+    ]);
+}
+
+
+public function listDoctors()
+{
+    $doctors = \App\Models\User::where('doctor', true)
+        ->select('id', 'first_name', 'last_name')
+        ->get();
+
+    return response()->json(['doctors' => $doctors]);
+}
+
+
+    public function setDoctor($id, Request $request)
+{
+    $user = User::findOrFail($id);
+
+    $validated = $request->validate([
+        'is_doctor' => 'required|boolean',
+    ]);
+
+    $user->doctor = $validated['is_doctor'];
+    $user->save();
+
+    return response()->json([
+        'message' => 'Le rôle de médecin a été mis à jour.',
+        'user' => $user
+    ]);
+}
+
+public function setAdmin(Request $request, $id)
+{
+    $request->validate([
+        'is_admin' => 'required|boolean',
+    ]);
+
+    $user = \App\Models\User::findOrFail($id);
+    $user->admin = $request->is_admin;
+    $user->save();
+
+    return response()->json(['message' => 'Rôle admin mis à jour.']);
+}
+
 }
